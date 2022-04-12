@@ -1,13 +1,12 @@
 namespace: integration-testing2
 groups:
-- name: instance
-  rules:
-  - alert: ConsulUp
-    expr: |
-      consul_up != 1
-    for: 1m
-    labels:
-      severity: critical
-    annotations:
-      message: Consul '{{ $labels.job }}' is not up.
-
+    - name: instance
+      rules:
+        - alert: ConsulUp
+          expr: |-
+            consul_up != 1
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            message: Consul '{{ $labels.job }}' is not up.
