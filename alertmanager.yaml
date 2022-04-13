@@ -44,6 +44,3 @@ receivers:
     - type: team
       name: 'ops_team'
 templates: []
-
-
-Templates:
