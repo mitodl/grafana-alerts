@@ -1,0 +1,21 @@
+---
+namespace: linux-host
+groups:
+    - name: disk-usage
+      rules:
+        - alert: DiskUsageWarning
+          expr: |-
+            (host_filesystem_used_ratio{job="integrations/linux_host", filesystem!~"(squashfs|vfat)", device=~"/dev.*"} * 100) > 80.0
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            description: Filesystem on {{ $labels.device }} at {{ $labels.instance }} is {{ printf "%.2f" $value }}% full.
+        - alert: DiskUsageCritical
+          expr: |-
+            (host_filesystem_used_ratio{job="integrations/linux_host", filesystem!~"(squashfs|vfat)", device=~"/dev.*"} * 100) > 95.0
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            description: Filesystem on {{ $labels.device }} at {{ $labels.instance }} is {{ printf "%.2f" $value }}% full.
