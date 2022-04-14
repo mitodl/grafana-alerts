@@ -4,22 +4,22 @@ groups:
       rules:
         - alert: CPUUsageWarning
           expr: |-
-            1 - sum (rate(host_cpu_seconds_total{mode='idle',host="$instance"}[5m]))  /  count(count by (cpu) (host_cpu_seconds_total{mode='idle', host="$instance"})) > 0.80
+            1 - sum(rate(host_cpu_seconds_total{host="$instance",mode="idle"}[5m])) / count(count by(cpu) (host_cpu_seconds_total{host="$instance",mode="idle"})) > 0.8
           for: 6h
           labels:
             severity: warning
           annotations:
-            description: CPU usage on {{ $labels.instance }} has been at {{ printf "%.2f" $value }} for at least 6 hours." 
+            description: CPU usage on {{ $labels.instance }} has been at {{ printf "%.2f" $value }} for at least 6 hours."
     - name: memory-usage
       rules:
         - alert: MemoryUsageWarning
           expr: |-
-            (host_memory_used_bytes / host_memory_total_bytes) > 0.90
+            (host_memory_used_bytes / host_memory_total_bytes) > 0.9
           for: 2h
           labels:
             severity: warning
           annotations:
-            description: Memory usage on {{ $labels.instance }} has been at {{ printf "%.2f" value }} for at least 2 hours." 
+            description: Memory usage on {{ $labels.instance }} has been at {{ printf "%.2f" value }} for at least 2 hours."
     - name: disk-usage
       rules:
         - alert: DiskUsageWarning
