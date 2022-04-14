@@ -2,8 +2,8 @@ namespace: vault
 groups:
     - name: general
       rules:
-          - alert: Vault Secrets Absent
-            expr: '{application="edxapp"} |~ "no secret exists"'
+          - alert: edxapp_VaultSecretsAbsent
+            expr: 'count_over_time({application="edxapp"} |~ "no secret exists"[1m]) > 0'
             for: 1m
             annotations:
                 description: A Vault or Consul template is attempting to retrieve a secret that doesn't exist. Investigate the possibility of a misconfiguration or an accidentally deleted value.
