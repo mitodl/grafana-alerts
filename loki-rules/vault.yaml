@@ -1,0 +1,10 @@
+namespace: vault
+groups:
+    - name: general
+      rules:
+          - alert: Vault Secrets Absent
+            expr: '{application="edxapp"} |~ "no secret exists"'
+            for: 1m
+            annotations:
+                description: A Vault or Consul template is attempting to retrieve a secret that doesn't exist. Investigate the possibility of a misconfiguration or an accidentally deleted value.
+
