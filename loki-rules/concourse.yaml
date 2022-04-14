@@ -1,0 +1,12 @@
+namespace: concourse
+groups:
+    - name: general
+      rules:
+          - alert: ConcourseProductionErrorRate
+            expr: 'sum by (message) (count_over_time({application="concourse"}| json | level="error" | environment="operations-production" != "failed-to-encode" [1m])) > 10'
+            for: 10m
+            labels:
+              severity: warning
+            annotations:
+                description: A high number of errors have been detected in the production concourse environment.
+
