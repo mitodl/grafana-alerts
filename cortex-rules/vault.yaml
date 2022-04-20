@@ -19,4 +19,4 @@ groups:
             severity: warning
             testing: "true"
           annotations:
-            description: vault_raft_leader_lasContact > 200 for at least 10 minutes in %% ENVIRONMENT_NAME %%. This could indicate that leadeship is flapping and should be investigated. 
+            description: vault_raft_leader_lasContact > 200 for at least 10 minutes in %% ENVIRONMENT_NAME %%. This could indicate that leadeship is flapping and should be investigated.
