@@ -43,4 +43,34 @@ receivers:
     responders:
     - type: team
       name: 'ops_team'
+- name: opsgenie-testing-p1
+  opsgenie_configs:
+  - send_resolved: true
+    api_key: '%% TESTING_OPS_GENIE_API_KEY %%'
+    message: '{{ template "opsgenie.default.message" . }}'
+    description: '{{ template "opsgenie.default.description" . }}'
+    priority: "p1"
+    responders:
+    - type: team
+      name: 'testing'
+- name: opsgenie-testing-p2
+  opsgenie_configs:
+  - send_resolved: true
+    api_key: '%% TESTING_OPS_GENIE_API_KEY %%'
+    message: '{{ template "opsgenie.default.message" . }}'
+    description: '{{ template "opsgenie.default.description" . }}'
+    priority: "p2"
+    responders:
+    - type: team
+      name: 'testing'
+- name: opsgenie-testing-p3
+  opsgenie_configs:
+  - send_resolved: true
+    api_key: '%% TESTING_OPS_GENIE_API_KEY %%'
+    message: '{{ template "opsgenie.default.message" . }}'
+    description: '{{ template "opsgenie.default.description" . }}'
+    priority: "p3"
+    responders:
+    - type: team
+      name: 'testing'
 templates: []
