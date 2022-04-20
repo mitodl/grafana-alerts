@@ -10,17 +10,37 @@ route:
   group_by: [alertname]
   repeat_interval: 4h
   routes:
+  # First, filter all testing alerts to that team in opsgenie
+  - matchers:
+    - testing="true"
+    routes:
+    - matchers:
+      - severity="warning"
+      receiver:  opsgenie-testing-p3
+      continue: false
+    - matchers:
+      - severity="critical"
+      receiver: opsgenie-testing-p2
+      continue: false
+    receiver: oblivion 
+    continue: false
+
+  # Now process real alerts
   - matchers:
     - severity="warning"
     receiver: opsgenie-warning
+    continue: false
   - matchers:
     - severity="critical"
     receiver: opsgenie-critical
+    continue: false
   receiver: oblivion
   continue: false
+
 receivers:
 # A null receiver for default messages.
 - name: oblivion
+
 # Non-critical alerts (don't wake anyone up for this)
 - name: opsgenie-warning
   opsgenie_configs:
@@ -43,6 +63,9 @@ receivers:
     responders:
     - type: team
       name: 'ops_team'
+
+# These receivers all point to a different team in ops genie that doesn't really go anywhere
+# but it will generate an alert with a history we can look at. 
 - name: opsgenie-testing-p1
   opsgenie_configs:
   - send_resolved: true

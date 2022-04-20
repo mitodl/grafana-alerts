@@ -1,0 +1,13 @@
+namespace: vault
+groups:
+    - name: general
+      rules:
+        - alert: VaultAbsent
+          expr: |-
+            absent(vault_core_active) or vault_core_active != 1
+          for: 10m
+          labels:
+            severity: critical
+            testing: true
+          annotations:
+            description: Vault metrics are missing from %% ENVIRONMENT NAME %%. This could indicate that vault has gone done/become unresponsive or that there is an issue collecting metrics and shipping them to grafana. 
