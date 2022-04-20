@@ -10,4 +10,4 @@ groups:
             severity: critical
             testing: "true"
           annotations:
-            description: Vault metrics are missing from %% ENVIRONMENT NAME %%. This could indicate that vault has gone done/become unresponsive or that there is an issue collecting metrics and shipping them to grafana.
+            description: Vault metrics are missing from %% ENVIRONMENT_NAME %%. This could indicate that vault has gone done/become unresponsive or that there is an issue collecting metrics and shipping them to grafana.
