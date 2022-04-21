@@ -1,11 +1,4 @@
-# These need to be set for the cortextool command to work
-#
-# CORTEX_ADDRESS 
-# CORTEX_API_USER 
-# CORTEX_API_KEY
-# CORTEX_TENANT_ID
-#
-# And these needs to be set for the various sed statements. If you have new subsitutions to add, here is where
+# These need to be set for the various sed statements. If you have new subsitutions to add, here is where
 # you would define them but if they require some secret piece of information you'll need to update the pipeline
 # definition in ol-infrastructure to make the vars available.
 # 
