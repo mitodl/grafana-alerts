@@ -4,14 +4,14 @@ groups:
       rules:
           - alert: edxapp_VaultSecretsAbsent
             expr: 'count_over_time({application="edxapp"} |~ "no secret exists"[1m]) > 0'
-            for: 1m
+            for: 5m
             labels:
                 severity: critical
             annotations:
                 description: A Vault or Consul template is attempting to retrieve a secret that doesn't exist. Investigate the possibility of a misconfiguration or an accidentally deleted value.
           - alert: edxapp_VaultAuthFailure
             expr: 'count by (environment) (count_over_time({application="edxapp"} | json | SYSLOG_IDENTIFIER="vault" |~ "error authenticating"[1m])) > 0'
-            for: 1m
+            for: 5m
             labels:
                 severity: critical
             annotations:
