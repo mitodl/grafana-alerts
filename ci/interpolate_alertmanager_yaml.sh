@@ -19,6 +19,4 @@ echo "executing sed statements for secret interpolation/etc"
 sed -i -e 's/%% OPS_TEAM_OPS_GENIE_API_KEY %%/$OPS_TEAM_OPS_GENIE_API_KEY/' $RESOURCE_NAME/alertmanager.yaml
 sed -i -e 's/%% TESTING_OPS_GENIE_API_KEY %%/$TESTING_OPS_GENIE_API_KEY/' $RESOURCE_NAME/alertmanager.yaml
 sed -i -e 's/%% ENVIRONMENT_NAME %%/$ENVIRONMENT_NAME/' $RESOURCE_NAME/alertmanager.yaml
-echo "executing cortextool" 
-OUTPUT=`cortextool alertmanager load $RESOURCE_NAME/alertmanager.yaml`
-echo $OUTPUT
+echo "executing cortextool"
