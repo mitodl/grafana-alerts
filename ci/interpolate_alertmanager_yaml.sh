@@ -14,6 +14,7 @@
 # TESTING_OPS_GENIE_API_KEY : The API token from OpsGenie for testing notifications.
 # ENVIRONMENT_NAME : The environment name (ci, qa, production).
 # 
+echo "$RESOURCE_NAME"
 
 sed -i -e 's/%% OPS_TEAM_OPS_GENIE_API_KEY %%/$OPS_TEAM_OPS_GENIE_API_KEY/' $RESOURCE_NAME/alertmanager.yaml
 sed -i -e 's/%% TESTING_OPS_GENIE_API_KEY %%/$TESTING_OPS_GENIE_API_KEY/' $RESOURCE_NAME/alertmanager.yaml
