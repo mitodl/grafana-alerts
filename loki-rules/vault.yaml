@@ -10,7 +10,7 @@ groups:
             annotations:
                 description: A Vault or Consul template is attempting to retrieve a secret that doesn't exist. Investigate the possibility of a misconfiguration or an accidentally deleted value.
           - alert: edxapp_VaultAuthFailure
-            expr: 'count by (environment) (count_over_time({application="edxapp"} | json | SYSLOG_IDENTIFIER="vault" |~ "error authenticating"[1m])) > 0'
+            expr: 'count by (environment) (count_over_time({application="edxapp"} | json | SYSLOG_IDENTIFIER="vault" |~ "error authenticating"[5m])) > 0'
             for: 5m
             labels:
                 severity: critical
