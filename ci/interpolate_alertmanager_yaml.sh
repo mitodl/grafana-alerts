@@ -1,5 +1,3 @@
-#!/bin/bash
-
 # These need to be set for the cortextool command to work
 #
 # CORTEX_ADDRESS 
