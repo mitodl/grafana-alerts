@@ -9,5 +9,5 @@
 # 
 
 echo "executing sed statements for secret interpolation/etc"
-sed -i -e 's/%% ENVIRONMENT_NAME %%/$ENVRIONMENT_NAME/' $RESOURCE_NAME/$RULE_DIRECTORY/*
+sed -i -e "s/%% ENVIRONMENT_NAME %%/$ENVRIONMENT_NAME/" $RESOURCE_NAME/$RULE_DIRECTORY/*
 echo "executing cortextool"
