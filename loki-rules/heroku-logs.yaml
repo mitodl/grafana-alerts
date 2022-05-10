@@ -1,0 +1,18 @@
+namespace: heroku-logs
+groups:
+    - name: all-apps-general
+      rules:
+          - alert: InvalidAccessKeyProduction
+            expr: 'sum by (application, environment) (count_over_time({environment=~".*production", application=~".+"} | json |= "InvalidAccessKeyId"[3h])) >= 1'
+            for: 1m
+            labels:
+              severity: critical
+            annotations:
+                description: An invalid aws key has been detected in {{ $labels.application }} {{ $labels.environment }}.
+          - alert: InvalidAccessKeyProduction
+            expr: 'sum by (application, environment) (count_over_time({environment=~".*production", application=~".+"} | json |= "InvalidAccessKeyId"[3h])) >= 1'
+            for: 1m
+            labels:
+              severity: warning
+            annotations:
+                description: An invalid aws key has been detected in {{ $labels.application }} {{ $labels.environment }}.
