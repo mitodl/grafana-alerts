@@ -9,7 +9,7 @@ groups:
               severity: critical
             annotations:
                 description: An invalid aws key has been detected in {{ $labels.application }} {{ $labels.environment }}.
-          - alert: InvalidAccessKeyProduction
+          - alert: InvalidAccessKeyNonProd
             expr: 'sum by (application, environment) (count_over_time({environment=~".*production", application=~".+"} | json |= "InvalidAccessKeyId"[3h])) >= 1'
             for: 1m
             labels:
