@@ -19,7 +19,7 @@ groups:
           labels:
             severity: warning
           annotations:
-            description: Memory usage on {{ $labels.instance }} has been at {{ printf "%.2f" value }} for at least 2 hours."
+            description: Memory usage on {{ $labels.instance }} has been at {{ printf "%.2f" $value }} for at least 2 hours."
     - name: disk-usage
       rules:
         - alert: DiskUsageWarning
