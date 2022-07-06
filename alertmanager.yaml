@@ -27,6 +27,20 @@ route:
 
   # Now process real alerts
   - matchers:
+    - dont_resolve="true"
+    routes:
+    - matchers:
+      - severity="warning"
+      receiver:  opsgenie-warning-no-auto-resolve
+      continue: false
+    - matchers:
+      - severity="critical"
+      receiver: opsgenie-critical-no-auto-resolve
+      continue: false
+    receiver: oblivion 
+    continue: false
+
+  - matchers:
     - severity="warning"
     receiver: opsgenie-warning
     continue: false
@@ -56,6 +70,29 @@ receivers:
 - name: opsgenie-critical
   opsgenie_configs:
   - send_resolved: true
+    api_key: '%% OPS_TEAM_OPS_GENIE_API_KEY %%'
+    message: '{{ template "opsgenie.default.message" . }}'
+    description: '{{ template "opsgenie.default.description" . }}'
+    priority: "p1"
+    responders:
+    - type: team
+      name: 'ops_team'
+
+# Non-critical alerts (don't wake anyone up for this)
+- name: opsgenie-warning-no-auto-resolve
+  opsgenie_configs:
+  - send_resolved: false
+    api_key: '%% OPS_TEAM_OPS_GENIE_API_KEY %%'
+    message: '{{ template "opsgenie.default.message" . }}'
+    description: '{{ template "opsgenie.default.description" . }}'
+    priority: "p3"
+    responders:
+    - type: team
+      name: 'ops_team'
+# Critical alerts (wake someone up for this)
+- name: opsgenie-critical-no-auto-resolve
+  opsgenie_configs:
+  - send_resolved: false
     api_key: '%% OPS_TEAM_OPS_GENIE_API_KEY %%'
     message: '{{ template "opsgenie.default.message" . }}'
     description: '{{ template "opsgenie.default.description" . }}'
