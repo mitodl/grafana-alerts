@@ -10,9 +10,24 @@ groups:
             annotations:
                 description: An invalid aws key has been detected in {{ $labels.application }} {{ $labels.environment }}.
           - alert: InvalidAccessKeyNonProd
-            expr: 'sum by (application, environment) (count_over_time({environment=~".*production", application=~".+"} | json |= "InvalidAccessKeyId"[3h])) >= 1'
+            expr: 'sum by (application, environment) (count_over_time({environment!~".*production", application=~".+"} | json |= "InvalidAccessKeyId"[3h])) >= 1'
             for: 1m
             labels:
               severity: warning
             annotations:
                 description: An invalid aws key has been detected in {{ $labels.application }} {{ $labels.environment }}.
+          - alert: AlternateInvalidAccessKeyProduction
+            expr: 'sum by(application, environment) (count_over_time({environment=~".*production", application=~".+"} |= "An error occurred (403) when calling the HeadObject operation: Forbidden" [3h])) >=1'
+            for: 1m
+            labels:
+              severity: critical
+            annotations:
+                description: An invalid aws key has been detected in {{ $labels.application }} {{ $labels.environment }}.
+          - alert: AlternateInvalidAccessKeyNonProd
+            expr: 'sum by(application, environment) (count_over_time({environment!~".*production", application=~".+"} |= "An error occurred (403) when calling the HeadObject operation: Forbidden" [3h])) >=1'
+            for: 1m
+            labels:
+              severity: warning
+            annotations:
+                description: An invalid aws key has been detected in {{ $labels.application }} {{ $labels.environment }}.
+
