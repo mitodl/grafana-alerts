@@ -31,3 +31,18 @@ groups:
             annotations:
                 description: An invalid aws key has been detected in {{ $labels.application }} {{ $labels.environment }}.
 
+          - alert: NoSAMLProviderDataProduction
+            expr: 'sum by(application, environment) (count_over_time({environment=~".*production", application="edxapp"} |= "No SAMLProviderData found for provider" [1h])) >=1'
+            for: 1m
+            labels:
+              severity: critical
+            annotations:
+              description: A SAML configuration error has been detected in {{ $labels.application }} {{ $labels.environment }}.
+
+          - alert: NoSAMLProviderDataNonProd
+            expr: 'sum by(application, environment) (count_over_time({environment!~".*production", application="edxapp"} |= "No SAMLProviderData found for provider" [1h])) >=1'
+            for: 1m
+            labels:
+              severity: warning
+            annotations:
+              description: A SAML configuration error has been detected in {{ $labels.application }} {{ $labels.environment }}.
