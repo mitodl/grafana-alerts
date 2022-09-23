@@ -9,6 +9,12 @@ groups:
               severity: critical
             annotations:
               description: A SAML configuration error has been detected in {{ $labels.application }} {{ $labels.environment }}.
+              resolution: |
+                ssh into an instance and execute the following
+                sudo su - edxapp -s /bin/bash
+                source edxapp_env 
+                python edx-platform/manage.py lms saml --pull
+                Takes several minutes to resolve
 
           - alert: NoSAMLProviderDataNonProd
             expr: 'sum by(application, environment) (count_over_time({environment!~".*production", application="edxapp"} |= "No SAMLProviderData found for provider" [1h])) >=1'
@@ -17,3 +23,9 @@ groups:
               severity: warning
             annotations:
               description: A SAML configuration error has been detected in {{ $labels.application }} {{ $labels.environment }}.
+              resolution: |
+                ssh into an instance and execute the following
+                sudo su - edxapp -s /bin/bash
+                source edxapp_env 
+                python edx-platform/manage.py lms saml --pull
+                Takes several minutes to resolve
