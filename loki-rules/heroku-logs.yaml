@@ -30,3 +30,10 @@ groups:
               severity: warning
             annotations:
                 description: An invalid aws key has been detected in {{ $labels.application }} {{ $labels.environment }}.
+          - alert: BootcampsSAMLIntegrationErrorProd
+            expr: 'sum by(application, environment) (count_over_time({environment~".*production", application=~"bootcamp"} |= "Unable to refresh local metadata" [3h])) >=1'
+            for: 1m
+            labels:
+              severity: critical
+            annotations:
+              description: The Bootcamps authentication integration with NovoEd is broken. This prevents learners from accessing courses.
