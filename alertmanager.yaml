@@ -41,6 +41,20 @@ route:
     continue: false
 
   - matchers:
+    - channel="notifications-ocw-misc"
+    routes:
+    - matchers:
+      - severity="warning"
+      receiver: slack-notifications-ocw-misc-warning
+      continue: false
+    - matchers:
+      - severity="critical"
+      receiver: slack-notifications-ocw-misc-critical
+      continue: false
+    receiver: oblivion 
+    continue: false
+
+  - matchers:
     - severity="warning"
     receiver: opsgenie-warning
     continue: false
@@ -54,6 +68,42 @@ route:
 receivers:
 # A null receiver for default messages.
 - name: oblivion
+
+- name: slack-notifications-ocw-misc-warning
+  slack_configs:
+  - send_resolved: true
+    api_url: '%% SLACK_NOTIFICATIONS_OCW_MISC_API_URL %%'
+    channel: '#notifications-ocw-misc'
+    color: 'warning'
+    icon_emoji: ':goose_warning:'
+    title: '[{{ .Status | toUpper }}:{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{- end }}] - {{ .CommonLabels.alertname }}{{- end -}}'
+    text: |
+      {{ range .Alerts }}
+        {{- if .Annotations.message }}
+            {{ .Annotations.message }}
+        {{- end }}
+        {{- if .Annotations.description }}
+            {{ .Annotations.description }}
+        {{- end }}
+      {{- end }}
+
+- name: slack-notifications-ocw-misc-critical
+  slack_configs:
+  - send_resolved: true
+    api_url: '%% SLACK_NOTIFICATIONS_OCW_MISC_API_URL %%'
+    channel: '#notifications-ocw-misc'
+    color: 'danger'
+    icon_emoji: ':alert:'
+    title: '[{{ .Status | toUpper }}:{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{- end }}] - {{ .CommonLabels.alertname }}{{- end -}}'
+    text: |
+      {{ range .Alerts }}
+        {{- if .Annotations.message }}
+            {{ .Annotations.message }}
+        {{- end }}
+        {{- if .Annotations.description }}
+            {{ .Annotations.description }}
+        {{- end }}
+      {{- end }}
 
 # Non-critical alerts (don't wake anyone up for this)
 - name: opsgenie-warning

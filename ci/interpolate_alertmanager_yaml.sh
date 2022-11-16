@@ -6,10 +6,12 @@
 # OPS_TEAM_OPS_GENIE_API_KEY : The API token from OpsGenie for real notifications.
 # TESTING_OPS_GENIE_API_KEY : The API token from OpsGenie for testing notifications.
 # ENVIRONMENT_NAME : The environment name (ci, qa, production).
+# SLACK_NOTIFICATIONS_OCW_MISC_API_URL : The Slack webhook URL for the channel #notifications-ocw-misc
 # 
 
 echo "executing sed statements for secret interpolation/etc"
 sed -i -e "s/%% OPS_TEAM_OPS_GENIE_API_KEY %%/$OPS_TEAM_OPS_GENIE_API_KEY/" $RESOURCE_NAME/alertmanager.yaml
 sed -i -e "s/%% TESTING_OPS_GENIE_API_KEY %%/$TESTING_OPS_GENIE_API_KEY/" $RESOURCE_NAME/alertmanager.yaml
 sed -i -e "s/%% ENVIRONMENT_NAME %%/$ENVIRONMENT_NAME/" $RESOURCE_NAME/alertmanager.yaml
+sed -i -e "s/%% SLACK_NOTIFICATIONS_OCW_MISC_API_URL &&/$SLACKNOTIFICATIONS_OCW_MISC_API_URL/" $RESOURCE_NAME/alertmanager.yaml
 echo "executing cortextool"
