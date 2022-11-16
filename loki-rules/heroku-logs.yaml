@@ -37,3 +37,19 @@ groups:
               severity: critical
             annotations:
               description: The Bootcamps authentication integration with NovoEd is broken. This prevents learners from accessing courses.
+          - alert: OCWStudio3PlayErrorDetectedNonProd
+            expr: 'sum by (application, environment) (count_over_time({service="heroku", application="ocw-studio", environment!~".*production"} |= "3Play transcript request failed for video_id" [5m])) >= 1'
+            for: 1m
+            labels:
+              severity: warning
+              channel: notifications-ocw-misc
+            annodations:
+              description: A 3play transcript request has failed in NonProduction.
+          - alert: OCWStudio3PlayErrorDetectedNonProd
+            expr: 'sum by (application, environment) (count_over_time({service="heroku", application="ocw-studio", environment=~".*production"} |= "3Play transcript request failed for video_id" [5m])) >= 1'
+            for: 1m
+            labels:
+              severity: warning
+              channel: notifications-ocw-misc
+            annodations:
+              description: A 3play transcript request has failed in Production.
