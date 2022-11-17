@@ -76,7 +76,7 @@ receivers:
     channel: '#notifications-ocw-misc'
     color: 'warning'
     icon_emoji: ':goose_warning:'
-    title: '[{{ .Status | toUpper }}:goose_warning:{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{- end }}] - {{ .CommonLabels.alertname }}'
+    title: ':goose_warning: [{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{- end }}] - {{ .CommonLabels.alertname }}'
     text: |
       {{ range .Alerts }}
         {{- if .Annotations.message }}
@@ -96,7 +96,7 @@ receivers:
     api_url: '%% SLACK_NOTIFICATIONS_OCW_MISC_API_URL %%'
     channel: '#notifications-ocw-misc'
     color: 'danger'
-    title: '[{{ .Status | toUpper }}:alert:{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{- end }}] - {{ .CommonLabels.alertname }}'
+    title: ':alert: [{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{- end }}] - {{ .CommonLabels.alertname }}'
     text: |
       {{ range .Alerts }}
         {{- if .Annotations.message }}
