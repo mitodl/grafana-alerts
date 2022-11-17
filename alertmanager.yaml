@@ -76,7 +76,7 @@ receivers:
     channel: '#notifications-ocw-misc'
     color: 'warning'
     icon_emoji: ':goose_warning:'
-    title: '[{{ .Status | toUpper }}:{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{- end }}] - {{ .CommonLabels.alertname }}{{- end -}}'
+    title: '[{{ .Status | toUpper }}:{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{- end }}] - {{ .CommonLabels.alertname }}'
     text: |
       {{ range .Alerts }}
         {{- if .Annotations.message }}
@@ -94,7 +94,7 @@ receivers:
     channel: '#notifications-ocw-misc'
     color: 'danger'
     icon_emoji: ':alert:'
-    title: '[{{ .Status | toUpper }}:{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{- end }}] - {{ .CommonLabels.alertname }}{{- end -}}'
+    title: '[{{ .Status | toUpper }}:{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{- end }}] - {{ .CommonLabels.alertname }}'
     text: |
       {{ range .Alerts }}
         {{- if .Annotations.message }}
