@@ -45,7 +45,7 @@ groups:
               channel: notifications-ocw-misc
             annotations:
               description: A 3play transcript request has failed in NonProduction.
-          - alert: OCWStudio3PlayErrorDetectedNonProd
+          - alert: OCWStudio3PlayErrorDetectedProd
             expr: 'sum by (application, environment) (count_over_time({service="heroku", application="ocw-studio", environment=~".*production"} |= "3Play transcript request failed for video_id" [5m])) >= 1'
             for: 1m
             labels:
