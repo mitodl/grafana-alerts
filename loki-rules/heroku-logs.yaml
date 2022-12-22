@@ -1,6 +1,6 @@
 namespace: heroku-logs
 groups:
-    - name: all-apps-general
+    - name: airbyte
       rules:
           - alert: InvalidAccessKeyProduction
             expr: 'sum by (application, environment) (count_over_time({environment=~".*production", application=~".+", application!="airbyte"} | json |= "InvalidAccessKeyId"[3h])) >= 1'
@@ -30,13 +30,17 @@ groups:
               severity: warning
             annotations:
                 description: An invalid aws key has been detected in {{ $labels.application }} {{ $labels.environment }}.
+    - name: bootcamp
+      rules:
           - alert: BootcampsSAMLIntegrationErrorProd
-            expr: 'sum by(application, environment) (count_over_time({environment=~".*production", application=~"bootcamp"} |= "Unable to refresh local metadata" [3h])) >=1'
+            expr: 'sum by(application, environment) (count_over_time({environment=~".*production", application=~"bootcamp-ecommerce"} |= "Unable to refresh local metadata" [3h])) >=1'
             for: 1m
             labels:
               severity: critical
             annotations:
               description: The Bootcamps authentication integration with NovoEd is broken. This prevents learners from accessing courses.
+    - name: ocw-studio
+      rules: 
           - alert: OCWStudio3PlayErrorDetectedNonProd
             expr: 'sum by (application, environment) (count_over_time({service="heroku", application="ocw-studio", environment!~".*production"} |= "3Play transcript request failed for video_id" [5m])) >= 1'
             for: 1m
@@ -53,3 +57,17 @@ groups:
               channel: notifications-ocw-misc
             annotations:
               description: A 3play transcript request has failed in Production.
+          - alert: OCWStudioContentSyncInvalidPasswordNonProd
+            expr: 'sum by (application, environment) (count_over_time({application="ocw-studio", environment!~".*production"} | json | message="Invalid Username and Password"[5m]))'
+            for: 1m
+            labels:
+              severity: warning
+            annotations:
+              description: An invalid username and password message was detected from content sync. This refer to the password used by OCW to talk to concourse. 
+          - alert: OCWStudioContentSyncInvalidPasswordProd
+            expr: 'sum by (application, environment) (count_over_time({application="ocw-studio", environment=~".*production"} | json | message="Invalid Username and Password"[5m]))'
+            for: 1m
+            labels:
+              severity: critical
+            annotations:
+              description: An invalid username and password message was detected from content sync. This refer to the password used by OCW to talk to concourse. 
