@@ -2,6 +2,22 @@ namespace: edxapp-logs
 groups:
     - name: all-apps-general
       rules:
+        - alert: RedisMemoryIssuesProduction
+          expr: 'sum by(application,environment)(count_over_time({application="edxapp", environment=~".*production"} |json |= "OOM command not allowed when used memory"[15m]) >= 1)'
+          for: 1m
+          labels:
+            severity: critical
+          annoations:
+            description: Redis is returning OOM errors to edxapp in {{ $labels.environment }}.
+            resolution: Check on the {{ $labels.environment }} redis cluster in the AWS console and resize if needed. 
+        - alert: RedisMemoryIssuesNonProd
+          expr: 'sum by(application,environment)(count_over_time({application="edxapp", environment!~".*production"} |json |= "OOM command not allowed when used memory"[15m]) >= 1)'
+          for: 1m
+          labels:
+            severity: warning
+          annoations:
+            description: Redis is returning OOM errors to edxapp in {{ $labels.environment }}.
+            resolution: Check on the {{ $labels.environment }} redis cluster in the AWS console and resize if needed. 
         - alert: ForumTimeoutProduction
           expr: 'sum by (application, environment) (count_over_time({environment=~".*production", application="edxapp"} |json  |= "Read timed out" |="forum"[3h])) >= 1'
           for: 1m
