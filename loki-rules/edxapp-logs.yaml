@@ -2,6 +2,22 @@ namespace: edxapp-logs
 groups:
     - name: all-apps-general
       rules:
+        - alert: ForumTimeoutProduction
+          expr: 'sum by (application, environment) (count_over_time({environment=~".*production", application="edxapp"} |json  |= "Read timed out" |="forum"[3h])) >= 1'
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            description: edxapp {{ $labels.environment }} is having trouble communicating with the forum service.
+            resolution: This typically means that forum is having difficulty talking to MongoAtlas. Check on forum containers and initiate an instance refresh if necessary.
+        - alert: ForumTimeoutNonProd
+          expr: 'sum by (application, environment) (count_over_time({environment!~".*production", application="edxapp"} |json  |= "Read timed out" |="forum"[3h])) >= 1'
+          for: 1m
+          labels:
+            severity: warning
+          annotations:
+            description: edxapp {{ $labels.environment }} is having trouble communicating with the forum service.
+            resolution: This typically means that forum is having difficulty talking to MongoAtlas. Check on forum containers and initiate an instance refresh if necessary.
         - alert: NoSAMLProviderDataProduction
           expr: '(sum by(application,environment)(count_over_time({environment=~".*production", application="edxapp"} |= "No SAMLProviderData found for provider"[1h])) >= 1)'
           for: 1m
