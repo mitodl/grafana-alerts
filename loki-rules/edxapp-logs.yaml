@@ -7,7 +7,7 @@ groups:
           for: 1m
           labels:
             severity: critical
-          annoations:
+          annotations:
             description: Redis is returning OOM errors to edxapp in {{ $labels.environment }}.
             resolution: Check on the {{ $labels.environment }} redis cluster in the AWS console and resize if needed. 
         - alert: RedisMemoryIssuesNonProd
@@ -15,7 +15,7 @@ groups:
           for: 1m
           labels:
             severity: warning
-          annoations:
+          annotations:
             description: Redis is returning OOM errors to edxapp in {{ $labels.environment }}.
             resolution: Check on the {{ $labels.environment }} redis cluster in the AWS console and resize if needed. 
         - alert: ForumTimeoutProduction
