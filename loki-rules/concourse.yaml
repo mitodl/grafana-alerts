@@ -2,7 +2,7 @@ namespace: concourse
 groups:
     - name: general
       rules:
-          - alert: ConcourseProductionErrorRate
+          - alert: ConcourseProductionErrorRateTesting
             expr: 'sum by (data_resource, data_pipeline, data_command, data_error, data_remote, host) (count_over_time({application="concourse", environment="operations-production"} | json | SYSLOG_IDENTIFIER="concourse" | level="error"[5m])) > 5'
             for: 5m
             labels:
@@ -10,7 +10,7 @@ groups:
               testing: true
             annotations:
                 description: A high number of errors have been detected in the production concourse environment.
-          - alert: ConcourseQAErrorRate
+          - alert: ConcourseQAErrorRateTesting
             expr: 'sum by (data_resource, data_pipeline, data_command, data_error, data_remote, host) (count_over_time({application="concourse", environment="operations-qa"} | json | SYSLOG_IDENTIFIER="concourse" | level="error"[5m])) > 5'
             for: 5m
             labels:

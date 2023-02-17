@@ -1,6 +1,6 @@
 namespace: heroku-logs
 groups:
-    - name: airbyte
+    - name: all-apps-general
       rules:
           - alert: InvalidAccessKeyProduction
             expr: 'sum by (application, environment) (count_over_time({environment=~".*production", application=~".+", application!="airbyte"} | json |= "InvalidAccessKeyId"[3h])) >= 1'
