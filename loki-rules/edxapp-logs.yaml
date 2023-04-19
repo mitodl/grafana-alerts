@@ -35,7 +35,7 @@ groups:
             description: edxapp {{ $labels.environment }} is having trouble communicating with the forum service.
             resolution: This typically means that forum is having difficulty talking to MongoAtlas. Check on forum containers and initiate an instance refresh if necessary.
         - alert: NoSAMLProviderDataProduction
-          expr: '(sum by(application,environment)(count_over_time({environment=~".*production", application="edxapp"} |= "No SAMLProviderData found for provider"[1h])) >= 1)'
+          expr: '(sum by(application,environment)(count_over_time({environment=~".*production", application="edxapp"} |= "No SAMLProviderData found for provider"[1h])) > 1)'
           for: 1m
           labels:
             severity: critical
@@ -43,7 +43,7 @@ groups:
             description: A SAML configuration error has been detected in {{ $labels.application }} {{ $labels.environment }}.
             resolution: "ssh into an instance and execute the following\nsudo su - edxapp -s /bin/bash\nsource edxapp_env \npython edx-platform/manage.py lms saml --pull\nTakes several minutes to resolve\n"
         - alert: NoSAMLProviderDataNonProd
-          expr: '(sum by(application,environment)(count_over_time({environment!~".*production", application="edxapp"} |= "No SAMLProviderData found for provider"[1h])) >= 1)'
+          expr: '(sum by(application,environment)(count_over_time({environment!~".*production", application="edxapp"} |= "No SAMLProviderData found for provider"[1h])) > 1)'
           for: 1m
           labels:
             severity: warning
