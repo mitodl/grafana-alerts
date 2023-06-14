@@ -4,7 +4,7 @@ groups:
       rules:
         - alert: VaultAbsent
           expr: |-
-            absent(vault_core_active) or vault_core_active != 1
+            absent(vault_core_active) or max(vault_core_active) != 1
           for: 10m
           labels:
             severity: critical
