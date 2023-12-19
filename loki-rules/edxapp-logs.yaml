@@ -18,6 +18,22 @@ groups:
           annotations:
             description: Redis is returning OOM errors to edxapp in {{ $labels.environment }}.
             resolution: Check on the {{ $labels.environment }} redis cluster in the AWS console and resize if needed. 
+        - alert: CredentialIssueProduction
+          expr: 'sum by(application,environment)(count_over_time({application="edxapp", environment=~".*production"} |json |= "Access denied for user"[15m]) >= 1)'
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            description: A credential issue has been detected in {{ $labels.environment }}.
+            resolution: Check on the {{ $labels.environment }} edxapp instances and initiate an instance refresh if needed
+        - alert: CredentialIssueNonProd
+          expr: 'sum by(application,environment)(count_over_time({application="edxapp", environment!~".*production"} |json |= "Access denied for user"[15m]) >= 1)'
+          for: 1m
+          labels:
+            severity: warning
+          annotations:
+            description: A credential issue has been detected in {{ $labels.environment }}.
+            resolution: Check on the {{ $labels.environment }} edxapp instances and initiate an instance refresh if needed
         - alert: ForumTimeoutProduction
           expr: 'sum by (application, environment) (count_over_time({environment=~".*production", application="edxapp"} |json  |= "Read timed out" |="forum"[1h])) >= 1'
           for: 1m
