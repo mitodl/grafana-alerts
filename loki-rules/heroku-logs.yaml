@@ -87,4 +87,11 @@ groups:
           for: 1m
           annotations:
               description: Keycloak is unable to decrypt a SAML assertion likely caused by an internal or external configuration change.
+        - alert: KeycloakServerError
+          expr: '{application="keycloak"} |= `Uncaught server error`'
+          labels:
+              severity: critical
+          for: 1m
+          annotations:
+              description: Keycloak experienced an error condition that is likely the result of a customization.
 
