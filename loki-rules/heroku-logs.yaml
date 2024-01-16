@@ -71,3 +71,27 @@ groups:
               severity: critical
             annotations:
               description: An invalid username and password message was detected from content sync. This refer to the password used by OCW to talk to concourse. 
+    - name: keycloak
+      rules:
+        - alert: KeycloakInternalError
+          expr: '{application="keycloak"} |= `HTTP 500 Internal Server Error`'
+          labels:
+              severity: critical
+          for: 1m
+          annotations:
+              description: Keycloak has responded with a 500 error which is likely caused by a custimization or configuration change.
+        - alert: KeycloakSAMLAssertionDecryptError
+          expr: '{application="keycloak"} |= `Not possible to decrypt SAML assertion`'
+          labels:
+              severity: warning
+          for: 1m
+          annotations:
+              description: Keycloak is unable to decrypt a SAML assertion likely caused by an internal or external configuration change.
+        - alert: KeycloakServerError
+          expr: '{application="keycloak"} |= `Uncaught server error`'
+          labels:
+              severity: critical
+          for: 1m
+          annotations:
+              description: Keycloak experienced an error condition that is likely the result of a customization.
+
