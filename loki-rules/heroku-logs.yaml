@@ -3,14 +3,14 @@ groups:
     - name: all-apps-general
       rules:
           - alert: InvalidAccessKeyProduction
-            expr: 'sum by (application, environment) (count_over_time({environment=~".*production", application=~".+", application!="airbyte"} | json |= "InvalidAccessKeyId"[3h])) >= 1'
+            expr: 'sum by (application, environment) (count_over_time({environment=~".*production", application=~".+", application!="dagster", application!="airbyte"} | json |= "InvalidAccessKeyId"[3h])) >= 1'
             for: 1m
             labels:
               severity: critical
             annotations:
                 description: An invalid aws key has been detected in {{ $labels.application }} {{ $labels.environment }}.
           - alert: InvalidAccessKeyNonProd
-            expr: 'sum by (application, environment) (count_over_time({environment!~".*production", application=~".+", application!="airbyte"} | json |= "InvalidAccessKeyId"[3h])) >= 1'
+            expr: 'sum by (application, environment) (count_over_time({environment!~".*production", application=~".+", application!="dagster", application!="airbyte"} | json |= "InvalidAccessKeyId"[3h])) >= 1'
             for: 1m
             labels:
               severity: warning
