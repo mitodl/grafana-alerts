@@ -1,6 +1,7 @@
 namespace: vault
 groups:
     - name: general
+      interval: 1m
       rules:
         - alert: VaultAbsent
           expr: |-

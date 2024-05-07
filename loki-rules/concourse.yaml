@@ -1,6 +1,7 @@
 namespace: concourse
 groups:
     - name: general
+      interval: 5m
       rules:
           - alert: ConcourseProductionErrorRateTesting
             expr: 'sum by (data_resource, data_pipeline, data_command, data_error, data_remote, host) (count_over_time({application="concourse", environment="operations-production"} | json | SYSLOG_IDENTIFIER="concourse" | level="error"[5m])) > 5'

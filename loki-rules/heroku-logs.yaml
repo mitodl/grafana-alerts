@@ -1,6 +1,7 @@
 namespace: heroku-logs
 groups:
     - name: all-apps-general
+      interval: 30m
       rules:
           - alert: InvalidAccessKeyProduction
             expr: 'sum by (application, environment) (count_over_time({environment=~".*production", application=~".+", application!="dagster", application!="airbyte"} | json |= "InvalidAccessKeyId"[3h])) >= 1'
@@ -30,7 +31,8 @@ groups:
               severity: warning
             annotations:
                 description: An invalid aws key has been detected in {{ $labels.application }} {{ $labels.environment }}.
-    - name: bootcamp
+    - name: bootcamps
+      interval: 30m
       rules:
           - alert: BootcampsSAMLIntegrationErrorProd
             expr: 'sum by(application, environment) (count_over_time({environment=~".*production", application=~"bootcamp-ecommerce"} |= "Unable to refresh local metadata" [3h])) >=1'
@@ -40,6 +42,7 @@ groups:
             annotations:
               description: The Bootcamps authentication integration with NovoEd is broken. This prevents learners from accessing courses.
     - name: ocw-studio
+      interval: 5m
       rules: 
           - alert: OCWStudio3PlayErrorDetectedNonProd
             expr: 'sum by (application, environment) (count_over_time({service="heroku", application="ocw-studio", environment!~".*production"} |= "3Play transcript request failed for video_id" [5m])) >= 1'

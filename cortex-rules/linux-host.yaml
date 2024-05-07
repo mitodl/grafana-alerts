@@ -1,6 +1,7 @@
 namespace: linux-host
 groups:
     - name: cpu-usage
+      interval: 1h
       rules:
         - alert: CPUUsageWarning
           expr: |-
@@ -11,6 +12,7 @@ groups:
           annotations:
             description: CPU usage on {{ $labels.instance }} has been at {{ printf "%.2f" $value }} for at least 6 hours."
     - name: memory-usage
+      interval: 30m
       rules:
         - alert: MemoryUsageWarning
           expr: |-
@@ -21,6 +23,7 @@ groups:
           annotations:
             description: Memory usage on {{ $labels.instance }} has been at {{ printf "%.2f" $value }} for at least 2 hours."
     - name: disk-usage
+      interval: 10m
       rules:
         - alert: DiskUsageWarning
           expr: |-

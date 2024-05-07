@@ -1,6 +1,7 @@
 namespace: edxapp-logs
 groups:
-    - name: all-apps-general
+    - name: all-apps-general-15m
+      interval: 5m
       rules:
         - alert: RedisMemoryIssuesProduction
           expr: 'sum by(application,environment)(count_over_time({application="edxapp", environment=~".*production"} |json |= "OOM command not allowed when used memory"[15m]) >= 1)'
@@ -34,6 +35,8 @@ groups:
           annotations:
             description: A credential issue has been detected in {{ $labels.environment }}.
             resolution: Check on the {{ $labels.environment }} edxapp instances and initiate an instance refresh if needed
+    - name: all-apps-general-1h
+      internval: 15m
         - alert: ForumTimeoutProduction
           expr: 'sum by (application, environment) (count_over_time({environment=~".*production", application="edxapp"} |json  |= "Read timed out" |="forum"[1h])) >= 1'
           for: 1m

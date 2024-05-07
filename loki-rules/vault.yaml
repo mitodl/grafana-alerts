@@ -1,6 +1,7 @@
 namespace: vault
 groups:
     - name: general
+      interval: 5m
       rules:
           - alert: edxapp_VaultSecretsAbsent
             expr: 'count by (environment) (count_over_time({application="edxapp"} | json | SYSLOG_IDENTIFIER="vault" |~ "no secret exists"[5m])) > 0'
