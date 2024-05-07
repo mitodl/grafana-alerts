@@ -36,7 +36,7 @@ groups:
             description: A credential issue has been detected in {{ $labels.environment }}.
             resolution: Check on the {{ $labels.environment }} edxapp instances and initiate an instance refresh if needed
     - name: all-apps-general-1h
-      internval: 15m
+      interval: 15m
         - alert: ForumTimeoutProduction
           expr: 'sum by (application, environment) (count_over_time({environment=~".*production", application="edxapp"} |json  |= "Read timed out" |="forum"[1h])) >= 1'
           for: 1m
