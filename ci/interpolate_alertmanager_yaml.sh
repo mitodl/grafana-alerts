@@ -14,5 +14,5 @@ sed -i -e "s/%% OPS_TEAM_OPS_GENIE_API_KEY %%/$OPS_TEAM_OPS_GENIE_API_KEY/" $RES
 sed -i -e "s/%% TESTING_OPS_GENIE_API_KEY %%/$TESTING_OPS_GENIE_API_KEY/" $RESOURCE_NAME/alertmanager.yaml
 sed -i -e "s/%% ENVIRONMENT_NAME %%/$ENVIRONMENT_NAME/" $RESOURCE_NAME/alertmanager.yaml
 sed -i -e "s/%% ROOTLY_BEARER_TOKEN %%/$ROOTLY_BEARER_TOKEN/" $RESOURCE_NAME/alertmanager.yaml
-sed -i -e "s/%% SLACK_NOTIFICATIONS_OCW_MISC_API_URL %%/$SLACK_NOTIFICATIONS_OCW_MISC_API_URL/" $RESOURCE_NAME/alertmanager.yaml
+sed -i -e "s/%% SLACK_NOTIFICATIONS_OCW_MISC_API_URL %%/\$SLACK_NOTIFICATIONS_OCW_MISC_API_URL/" $RESOURCE_NAME/alertmanager.yaml
 echo "executing cortextool"
