@@ -79,7 +79,7 @@ receivers:
       {{- end }}
 
 # Non-critical alerts (don't wake anyone up for this)
-- name: rootly-production
+- name: rootly
   webhook_configs:
   - url: 'https://webhooks.rootly.com/webhooks/incoming/alertmanager_webhooks'
     send_resolved: true
