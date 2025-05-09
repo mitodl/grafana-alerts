@@ -12,35 +12,6 @@ route:
   routes:
   # First, filter all testing alerts to that team in opsgenie
   - matchers:
-    - testing="true"
-    routes:
-    - matchers:
-      - severity="warning"
-      receiver:  opsgenie-testing-p3
-      continue: false
-    - matchers:
-      - severity="critical"
-      receiver: opsgenie-testing-p2
-      continue: false
-    receiver: oblivion 
-    continue: false
-
-  # Now process real alerts
-  - matchers:
-    - dont_resolve="true"
-    routes:
-    - matchers:
-      - severity="warning"
-      receiver:  opsgenie-warning-no-auto-resolve
-      continue: false
-    - matchers:
-      - severity="critical"
-      receiver: opsgenie-critical-no-auto-resolve
-      continue: false
-    receiver: oblivion 
-    continue: false
-
-  - matchers:
     - channel="notifications-ocw-misc"
     routes:
     - matchers:
@@ -56,11 +27,11 @@ route:
 
   - matchers:
     - severity="warning"
-    receiver: opsgenie-warning
+    receiver: rootly
     continue: false
   - matchers:
     - severity="critical"
-    receiver: opsgenie-critical
+    receiver: rootly
     continue: false
   receiver: oblivion
   continue: false
@@ -108,81 +79,12 @@ receivers:
       {{- end }}
 
 # Non-critical alerts (don't wake anyone up for this)
-- name: opsgenie-warning
-  opsgenie_configs:
-  - send_resolved: true
-    api_key: '%% OPS_TEAM_OPS_GENIE_API_KEY %%'
-    message: '{{ template "opsgenie.default.message" . }}'
-    description: '{{ template "opsgenie.default.description" . }}'
-    priority: "p3"
-    responders:
-    - type: team
-      name: 'ops_team'
-# Critical alerts (wake someone up for this)
-- name: opsgenie-critical
-  opsgenie_configs:
-  - send_resolved: true
-    api_key: '%% OPS_TEAM_OPS_GENIE_API_KEY %%'
-    message: '{{ template "opsgenie.default.message" . }}'
-    description: '{{ template "opsgenie.default.description" . }}'
-    priority: "p1"
-    responders:
-    - type: team
-      name: 'ops_team'
-
-# Non-critical alerts (don't wake anyone up for this)
-- name: opsgenie-warning-no-auto-resolve
-  opsgenie_configs:
-  - send_resolved: false
-    api_key: '%% OPS_TEAM_OPS_GENIE_API_KEY %%'
-    message: '{{ template "opsgenie.default.message" . }}'
-    description: '{{ template "opsgenie.default.description" . }}'
-    priority: "p3"
-    responders:
-    - type: team
-      name: 'ops_team'
-# Critical alerts (wake someone up for this)
-- name: opsgenie-critical-no-auto-resolve
-  opsgenie_configs:
-  - send_resolved: false
-    api_key: '%% OPS_TEAM_OPS_GENIE_API_KEY %%'
-    message: '{{ template "opsgenie.default.message" . }}'
-    description: '{{ template "opsgenie.default.description" . }}'
-    priority: "p1"
-    responders:
-    - type: team
-      name: 'ops_team'
-
-# These receivers all point to a different team in ops genie that doesn't really go anywhere
-# but it will generate an alert with a history we can look at. 
-- name: opsgenie-testing-p1
-  opsgenie_configs:
-  - send_resolved: true
-    api_key: '%% TESTING_OPS_GENIE_API_KEY %%'
-    message: '{{ template "opsgenie.default.message" . }}'
-    description: '{{ template "opsgenie.default.description" . }}'
-    priority: "p1"
-    responders:
-    - type: team
-      name: 'testing'
-- name: opsgenie-testing-p2
-  opsgenie_configs:
-  - send_resolved: true
-    api_key: '%% TESTING_OPS_GENIE_API_KEY %%'
-    message: '{{ template "opsgenie.default.message" . }}'
-    description: '{{ template "opsgenie.default.description" . }}'
-    priority: "p2"
-    responders:
-    - type: team
-      name: 'testing'
-- name: opsgenie-testing-p3
-  opsgenie_configs:
-  - send_resolved: true
-    api_key: '%% TESTING_OPS_GENIE_API_KEY %%'
-    message: '{{ template "opsgenie.default.message" . }}'
-    description: '{{ template "opsgenie.default.description" . }}'
-    priority: "p3"
-    responders:
-    - type: team
-      name: 'testing'
+- name: rootly
+  webhook_configs:
+  - url: 'https://webhooks.rootly.com/webhooks/incoming/alertmanager_webhooks'
+    send_resolved: true
+    http_config:
+      authorization:
+        type: Bearer
+        credentials: d7092db7d3afc0f0a3366c647f9493d35f3383f0702fe3cf29384ce14346dfec
 templates: []
