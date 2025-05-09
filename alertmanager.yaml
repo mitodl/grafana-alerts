@@ -79,12 +79,12 @@ receivers:
       {{- end }}
 
 # Non-critical alerts (don't wake anyone up for this)
-- name: rootly
+- name: rootly-production
   webhook_configs:
   - url: 'https://webhooks.rootly.com/webhooks/incoming/alertmanager_webhooks'
     send_resolved: true
     http_config:
       authorization:
         type: Bearer
-        credentials: d7092db7d3afc0f0a3366c647f9493d35f3383f0702fe3cf29384ce14346dfec
+        credentials: '%% ROOTLY_BEARER_TOKEN %%'
 templates: []
