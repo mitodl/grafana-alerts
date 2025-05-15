@@ -1,0 +1,21 @@
+namespace: eks
+groups:
+  - name: general
+    interval: 1m
+    rules:
+      - alert: DaemonsetReplicasMissingWarning
+        expr: |-
+          sum by (cluster, namespace, daemonset) (kube_daemonset_status_current_number_scheduled{cluster=~".*-(ci|qa)"}) / sum by (cluster, namespace, daemonset) (kube_daemonset_status_desired_number_scheduled)
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: There is a mismatch between the requested number of instances for daemonset {{ $labels.daemonset }} in namespace {{ $labels.namespace }} in cluster {{ $labels.cluster }}. This may mean there is a node stuck leaving or joining the cluster or another issue preventing the daemonset from being correctly scheduled. 
+      - alert: DaemonsetReplicasMissingCritical
+        expr: |-
+          sum by (cluster, namespace, daemonset) (kube_daemonset_status_current_number_scheduled{cluster=~".*-(production)"}) / sum by (cluster, namespace, daemonset) (kube_daemonset_status_desired_number_scheduled)
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          description: There is a mismatch between the requested number of instances for daemonset {{ $labels.daemonset }} in namespace {{ $labels.namespace }} in cluster {{ $labels.cluster }}. This may mean there is a node stuck leaving or joining the cluster or another issue preventing the daemonset from being correctly scheduled. 
