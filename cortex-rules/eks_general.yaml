@@ -40,7 +40,7 @@ groups:
 
       - alert: DeploymentUnavailableWarning
         expr: |-
-          sum by (cluster, namespace, deployment, condition, status) (kube_deployment_status_condition{cluster=~".*-(production), condition="Available", status="false"}) > 0
+          sum by (cluster, namespace, deployment, condition, status) (kube_deployment_status_condition{cluster=~".*-(production)", condition="Available", status="false"}) > 0
         for: 10m
         labels:
           severity: warning
@@ -48,7 +48,7 @@ groups:
           description: A deployment {{ $labels.deployment }} in namespace {{ $labels.namespace }} in cluster {{ $labels.cluster }} is not available for an extended period of time.
       - alert: DeploymentUnavailableCritical
         expr: |-
-          sum by (cluster, namespace, deployment, condition, status) (kube_deployment_status_condition{cluster=~".*-(ci|qa), condition="Available", status="false"}) > 0
+          sum by (cluster, namespace, deployment, condition, status) (kube_deployment_status_condition{cluster=~".*-(ci|qa)", condition="Available", status="false"}) > 0
         for: 10m
         labels:
           severity: critical
