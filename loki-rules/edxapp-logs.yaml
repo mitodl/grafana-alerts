@@ -1,7 +1,17 @@
 namespace: edxapp-logs
 groups:
-    - name: all-apps-general-15m
+    - name: mitxonline-web-5m
       interval: 5m
+      rules:
+      - alert: MitxOnline500Errors
+        expr: sum(count_over_time(({application="edxapp", environment="mitxonline-production"} | json | container_name=~`.*-caddy-.*` | line_format "{{.message}}" | json | status >= 500)[5m])) > 100
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+            description: High rate of 500 errors on mitxonline-production.
+    - name: all-apps-general-15m
+      interval: 15m
       rules:
         - alert: RedisMemoryIssuesProduction
           expr: 'sum by(application,environment)(count_over_time({application="edxapp", environment=~".*production"} |json |= "OOM command not allowed when used memory"[15m]) >= 1)'
@@ -36,7 +46,7 @@ groups:
             description: A credential issue has been detected in {{ $labels.environment }}.
             resolution: Check on the {{ $labels.environment }} edxapp instances and initiate an instance refresh if needed
     - name: all-apps-general-1h
-      interval: 15m
+      interval: 1h
       rules:
         - alert: ForumTimeoutProduction
           expr: 'sum by (application, environment) (count_over_time({environment=~".*production", application="edxapp"} |json  |= "Read timed out" |="forum"[1h])) >= 1'
