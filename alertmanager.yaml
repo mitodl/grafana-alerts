@@ -25,7 +25,7 @@ route:
     receiver: oblivion 
     continue: false
     # Dump the built in kubernetes alerts to oblivion
-  - matcher:
+  - matchers:
     - alertname=~"Kube.*"
     receiver: oblivion
     continue: false

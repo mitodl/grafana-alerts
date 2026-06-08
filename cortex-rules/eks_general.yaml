@@ -10,7 +10,7 @@ groups:
         labels:
           severity: warning
         annotations:
-          description: There is a mismatch between the requested number of instances for daemonset {{ $labels.daemonset }} in namespace {{ $labels.namespace }} in cluster {{ $labels.cluster }}. This may mean there is a node stuck leaving or joining the cluster or another issue preventing the daemonset from being correctly scheduled. 
+          description: There is a mismatch between the requested number of instances for daemonset {{ $labels.daemonset }} in namespace {{ $labels.namespace }} in cluster {{ $labels.cluster }}. This may mean there is a node stuck leaving or joining the cluster or another issue preventing the daemonset from being correctly scheduled.
       - alert: DaemonsetReplicasMissingCritical
         expr: |-
           sum by (cluster, namespace, daemonset) (kube_daemonset_status_current_number_scheduled{cluster=~".*-(production)"}) / sum by (cluster, namespace, daemonset) (kube_daemonset_status_desired_number_scheduled) < 1.0
@@ -18,7 +18,7 @@ groups:
         labels:
           severity: critical
         annotations:
-          description: There is a mismatch between the requested number of instances for daemonset {{ $labels.daemonset }} in namespace {{ $labels.namespace }} in cluster {{ $labels.cluster }}. This may mean there is a node stuck leaving or joining the cluster or another issue preventing the daemonset from being correctly scheduled. 
+          description: There is a mismatch between the requested number of instances for daemonset {{ $labels.daemonset }} in namespace {{ $labels.namespace }} in cluster {{ $labels.cluster }}. This may mean there is a node stuck leaving or joining the cluster or another issue preventing the daemonset from being correctly scheduled.
 
       - alert: DeploymentReplicasMissingCritical
         expr: |-
@@ -33,14 +33,13 @@ groups:
           sum by (cluster, namespace, deployment) (kube_deployment_status_replicas_available{cluster=~".*-(ci|qa)"}) / sum by (cluster, namespace, deployment) (kube_deployment_status_replicas) < 1.0
         for: 10m
         labels:
-          severity: Warning
+          severity: warning
         annotations:
           description: There is a mismatch between the requested number of instances for deployment {{ $labels.deployment }} in namespace {{ $labels.namespace }} in cluster {{ $labels.cluster }}.
 
-
       - alert: DeploymentUnavailableWarning
         expr: |-
-          sum by (cluster, namespace, deployment, condition, status) (kube_deployment_status_condition{cluster=~".*-(production)", condition="Available", status="false"}) > 0
+          sum by (cluster, namespace, deployment, condition, status) (kube_deployment_status_condition{cluster=~".*-(ci|qa)", condition="Available", status="false"}) > 0
         for: 10m
         labels:
           severity: warning
@@ -48,11 +47,119 @@ groups:
           description: A deployment {{ $labels.deployment }} in namespace {{ $labels.namespace }} in cluster {{ $labels.cluster }} is not available for an extended period of time.
       - alert: DeploymentUnavailableCritical
         expr: |-
-          sum by (cluster, namespace, deployment, condition, status) (kube_deployment_status_condition{cluster=~".*-(ci|qa)", condition="Available", status="false"}) > 0
+          sum by (cluster, namespace, deployment, condition, status) (kube_deployment_status_condition{cluster=~".*-(production)", condition="Available", status="false"}) > 0
         for: 10m
         labels:
           severity: critical
         annotations:
           description: A deployment {{ $labels.deployment }} in namespace {{ $labels.namespace }} in cluster {{ $labels.cluster }} is not available for an extended period of time.
 
+      - alert: StatefulSetReplicasMissingWarning
+        expr: |-
+          sum by (cluster, namespace, statefulset) (kube_statefulset_status_replicas_ready{cluster=~".*-(ci|qa)"}) / sum by (cluster, namespace, statefulset) (kube_statefulset_replicas) < 1.0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: There is a mismatch between the requested number of instances for statefulset {{ $labels.statefulset }} in namespace {{ $labels.namespace }} in cluster {{ $labels.cluster }}.
+      - alert: StatefulSetReplicasMissingCritical
+        expr: |-
+          sum by (cluster, namespace, statefulset) (kube_statefulset_status_replicas_ready{cluster=~".*-(production)"}) / sum by (cluster, namespace, statefulset) (kube_statefulset_replicas) < 1.0
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          description: There is a mismatch between the requested number of instances for statefulset {{ $labels.statefulset }} in namespace {{ $labels.namespace }} in cluster {{ $labels.cluster }}.
 
+      - alert: NodeNotReadyWarning
+        expr: |-
+          sum by (cluster, node) (kube_node_status_condition{cluster=~".*-(ci|qa)", condition="Ready", status="true"} == 0)
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          description: Node {{ $labels.node }} in cluster {{ $labels.cluster }} has been in a not-ready state for more than 5 minutes.
+      - alert: NodeNotReadyCritical
+        expr: |-
+          sum by (cluster, node) (kube_node_status_condition{cluster=~".*-(production)", condition="Ready", status="true"} == 0)
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          description: Node {{ $labels.node }} in cluster {{ $labels.cluster }} has been in a not-ready state for more than 5 minutes.
+
+      - alert: PodCrashLoopingWarning
+        expr: |-
+          sum by (cluster, namespace, pod, container) (kube_pod_container_status_waiting_reason{cluster=~".*-(ci|qa)", reason="CrashLoopBackOff"}) > 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          description: Container {{ $labels.container }} in pod {{ $labels.pod }} in namespace {{ $labels.namespace }} in cluster {{ $labels.cluster }} is in CrashLoopBackOff.
+      - alert: PodCrashLoopingCritical
+        expr: |-
+          sum by (cluster, namespace, pod, container) (kube_pod_container_status_waiting_reason{cluster=~".*-(production)", reason="CrashLoopBackOff"}) > 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          description: Container {{ $labels.container }} in pod {{ $labels.pod }} in namespace {{ $labels.namespace }} in cluster {{ $labels.cluster }} is in CrashLoopBackOff.
+
+      - alert: PodOOMKilledWarning
+        expr: |-
+          sum by (cluster, namespace, pod, container) (
+            (kube_pod_container_status_last_terminated_reason{cluster=~".*-(ci|qa)", reason="OOMKilled"} == 1)
+            * on (cluster, namespace, pod, container) group_left()
+            (increase(kube_pod_container_status_restarts_total[1h]) > 0)
+          )
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          description: Container {{ $labels.container }} in pod {{ $labels.pod }} in namespace {{ $labels.namespace }} in cluster {{ $labels.cluster }} has been OOMKilled and is actively restarting. Memory limits may need to be increased.
+      - alert: PodOOMKilledCritical
+        expr: |-
+          sum by (cluster, namespace, pod, container) (
+            (kube_pod_container_status_last_terminated_reason{cluster=~".*-(production)", reason="OOMKilled"} == 1)
+            * on (cluster, namespace, pod, container) group_left()
+            (increase(kube_pod_container_status_restarts_total[1h]) > 0)
+          )
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          description: Container {{ $labels.container }} in pod {{ $labels.pod }} in namespace {{ $labels.namespace }} in cluster {{ $labels.cluster }} has been OOMKilled and is actively restarting. Memory limits may need to be increased.
+
+      - alert: KubernetesJobFailedWarning
+        expr: |-
+          sum by (cluster, namespace, job_name) (kube_job_status_failed{cluster=~".*-(ci|qa)", namespace!="dagster"} > 0)
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          description: Job {{ $labels.job_name }} in namespace {{ $labels.namespace }} in cluster {{ $labels.cluster }} has failed.
+      - alert: KubernetesJobFailedCritical
+        expr: |-
+          sum by (cluster, namespace, job_name) (kube_job_status_failed{cluster=~".*-(production)", namespace!="dagster"} > 0)
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          description: Job {{ $labels.job_name }} in namespace {{ $labels.namespace }} in cluster {{ $labels.cluster }} has failed.
+
+      - alert: HPAAtMaxReplicasWarning
+        expr: |-
+          sum by (cluster, namespace, horizontalpodautoscaler) (kube_horizontalpodautoscaler_status_current_replicas{cluster=~".*-(ci|qa)"}) >= sum by (cluster, namespace, horizontalpodautoscaler) (kube_horizontalpodautoscaler_spec_max_replicas{cluster=~".*-(ci|qa)"})
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          description: HPA {{ $labels.horizontalpodautoscaler }} in namespace {{ $labels.namespace }} in cluster {{ $labels.cluster }} has been at its maximum replica count for 15 minutes. The workload may be unable to scale further under load.
+      - alert: HPAAtMaxReplicasCritical
+        expr: |-
+          sum by (cluster, namespace, horizontalpodautoscaler) (kube_horizontalpodautoscaler_status_current_replicas{cluster=~".*-(production)"}) >= sum by (cluster, namespace, horizontalpodautoscaler) (kube_horizontalpodautoscaler_spec_max_replicas{cluster=~".*-(production)"})
+        for: 15m
+        labels:
+          severity: critical
+        annotations:
+          description: HPA {{ $labels.horizontalpodautoscaler }} in namespace {{ $labels.namespace }} in cluster {{ $labels.cluster }} has been at its maximum replica count for 15 minutes. The workload may be unable to scale further under load.
