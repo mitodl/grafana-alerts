@@ -5,7 +5,10 @@ groups:
       rules:
         - alert: CPUUsageWarning
           expr: |-
-            1 - sum(rate(host_cpu_seconds_total{host="$instance",mode="idle"}[5m])) / count(count by(cpu) (host_cpu_seconds_total{host="$instance",mode="idle"})) > 0.8
+            1 - (
+              sum by (cluster, instance) (rate(host_cpu_seconds_total{mode="idle", job="integrations/linux_host"}[5m]))
+              / sum by (cluster, instance) (rate(host_cpu_seconds_total{job="integrations/linux_host"}[5m]))
+            ) > 0.8
           for: 6h
           labels:
             severity: warning
