@@ -1,0 +1,47 @@
+namespace: cert-manager
+groups:
+  - name: cert-manager-production
+    interval: 5m
+    rules:
+      - alert: CertManagerACMEIssuerUnavailableProduction
+        expr: 'sum by (cluster) (count_over_time({app_kubernetes_io_name="cert-manager", cluster=~".*-production"} |= "ACME client for issuer not initialised/available" [15m])) > 3'
+        for: 5m
+        labels:
+          severity: critical
+          environment: production
+        annotations:
+          description: cert-manager in {{ $labels.cluster }} cannot reach the ACME issuer. All certificate renewals are blocked until resolved.
+          resolution: Check cert-manager pod logs and verify network connectivity to the ACME API. May indicate a network policy, DNS resolution failure, or a misconfigured ClusterIssuer credential.
+
+      - alert: CertManagerChallengePresentationFailureProduction
+        expr: 'sum by (cluster) (count_over_time({app_kubernetes_io_name="cert-manager", cluster=~".*-production"} |= "error presenting challenge" [15m])) > 1'
+        for: 5m
+        labels:
+          severity: critical
+          environment: production
+        annotations:
+          description: cert-manager in {{ $labels.cluster }} is failing to present ACME DNS-01 challenges. Certificate issuance will fail until resolved.
+          resolution: Check IAM permissions for the Route 53 hosted zone used by the cert-manager challenge solver and verify the ClusterIssuer DNS provider configuration.
+
+  - name: cert-manager-non-production
+    interval: 5m
+    rules:
+      - alert: CertManagerACMEIssuerUnavailableNonProd
+        expr: 'sum by (cluster) (count_over_time({app_kubernetes_io_name="cert-manager", cluster!~".*-production"} |= "ACME client for issuer not initialised/available" [15m])) > 3'
+        for: 5m
+        labels:
+          severity: warning
+          environment: non-production
+        annotations:
+          description: cert-manager in {{ $labels.cluster }} cannot reach the ACME issuer. Certificate renewals are blocked in this environment.
+          resolution: Check cert-manager pod logs and verify network connectivity to the ACME API. May indicate a network policy, DNS resolution failure, or a misconfigured ClusterIssuer credential.
+
+      - alert: CertManagerChallengePresentationFailureNonProd
+        expr: 'sum by (cluster) (count_over_time({app_kubernetes_io_name="cert-manager", cluster!~".*-production"} |= "error presenting challenge" [15m])) > 1'
+        for: 5m
+        labels:
+          severity: warning
+          environment: non-production
+        annotations:
+          description: cert-manager in {{ $labels.cluster }} is failing to present ACME DNS-01 challenges. Certificate issuance will fail until resolved.
+          resolution: Check IAM permissions for the Route 53 hosted zone used by the cert-manager challenge solver and verify the ClusterIssuer DNS provider configuration.
