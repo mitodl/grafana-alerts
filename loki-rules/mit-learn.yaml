@@ -4,7 +4,7 @@ groups:
       interval: 5m
       rules:
           - alert: mitxonline-5xx-error-percentage
-            expr: 'sum(rate({cluster="applications-production", namespace="mitxonline", container="nginx"} | pattern `<client> - - [<_>] "<method> <uri> <_>" <status> <bytes> "<referer>" "<agent>" "<_>"` | status=~"5.." [5m])) / sum(rate({cluster="applications-production", namespace="mitxonline", container="nginx"} | pattern `<client> - - [<_>] "<method> <uri> <_>" <status> <bytes> "<referer>" "<agent>" "<_>"` [5m])) * 100'
+            expr: 'sum(rate({cluster="applications-production", namespace="mitxonline", container="nginx"} | pattern `<client> - - [<_>] "<method> <uri> <_>" <status> <bytes> "<referer>" "<agent>" "<_>"` | status=~"5.." [5m])) / sum(rate({cluster="applications-production", namespace="mitxonline", container="nginx"} | pattern `<client> - - [<_>] "<method> <uri> <_>" <status> <bytes> "<referer>" "<agent>" "<_>"` [5m])) * 100 > 5'
             for: 5m
             labels:
                 severity: critical
@@ -12,7 +12,7 @@ groups:
             annotations:
                 description: An increase in 5xx errors that may indicate an issue with mitxonline
           - alert: mitlearn-5xx-error-percentage
-            expr: 'sum(rate({cluster="applications-production", namespace="mitlearn", container="nginx"} | pattern `<client> - - [<_>] "<method> <uri> <_>" <status> <bytes> "<referer>" "<agent>" "<_>"` | status=~"5.." [5m])) / sum(rate({cluster="applications-production", namespace="mitlearn", container="nginx"} | pattern `<client> - - [<_>] "<method> <uri> <_>" <status> <bytes> "<referer>" "<agent>" "<_>"` [5m])) * 100'
+            expr: 'sum(rate({cluster="applications-production", namespace="mitlearn", container="nginx"} | pattern `<client> - - [<_>] "<method> <uri> <_>" <status> <bytes> "<referer>" "<agent>" "<_>"` | status=~"5.." [5m])) / sum(rate({cluster="applications-production", namespace="mitlearn", container="nginx"} | pattern `<client> - - [<_>] "<method> <uri> <_>" <status> <bytes> "<referer>" "<agent>" "<_>"` [5m])) * 100 > 5'
             for: 5m
             labels:
                 severity: critical
