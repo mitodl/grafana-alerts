@@ -1,0 +1,62 @@
+namespace: vector-edxapp-tracking
+groups:
+    - name: tracking-log-source
+      interval: 5m
+      rules:
+        - alert: EdxappTrackingLogSourceSilent
+          expr: |-
+            sum by (cluster, namespace) (
+              rate(vector_component_received_events_total{
+                component_id="collect_edx_tracking_logs",
+                cluster=~".+-production"
+              }[3h])
+            ) == 0
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            description: >
+              Vector in {{ $labels.namespace }} on {{ $labels.cluster }} has received
+              no events from the edxapp tracking log file for 3 hours. The application
+              may not be writing tracking events to disk, or the Vector sidecar may be
+              unhealthy.
+
+    - name: tracking-log-s3
+      interval: 5m
+      rules:
+        - alert: EdxappTrackingLogS3Error
+          expr: |-
+            sum by (cluster, namespace, component_id) (
+              rate(vector_component_errors_total{
+                component_id=~"ship_edx_tracking_logs_to_s3.*",
+                cluster=~".+-production"
+              }[15m])
+            ) > 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            description: >
+              Vector sink {{ $labels.component_id }} in {{ $labels.namespace }} on
+              {{ $labels.cluster }} is reporting S3 delivery errors. Tracking logs
+              may not be reaching S3. Check Vector sidecar logs and verify IAM role
+              permissions on the edxapp-tracking S3 bucket.
+
+        - alert: EdxappTrackingLogNoS3Delivery
+          expr: |-
+            sum by (cluster, namespace) (
+              rate(vector_component_sent_bytes_total{
+                component_id="ship_edx_tracking_logs_to_s3",
+                cluster=~".+-production"
+              }[4h])
+            ) == 0
+          for: 15m
+          labels:
+            severity: critical
+          annotations:
+            description: >
+              No tracking log bytes have been delivered to S3 by Vector in
+              {{ $labels.namespace }} on {{ $labels.cluster }} for 4 hours
+              (exceeds the 3600s batch timeout). Tracking events are not
+              reaching the edxapp-tracking S3 bucket. Check Vector sidecar
+              health and the tracking log file at /openedx/data/logs/tracking_logs.log.
