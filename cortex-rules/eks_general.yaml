@@ -107,7 +107,7 @@ groups:
 
       - alert: CeleryBeatPodRestarts
         expr: |-
-          increase(kube_pod_container_status_restarts_total{cluster=~".*-(ci|qa)", pod=~".*beat.*"}[1h]) > 3
+          increase(kube_pod_container_status_restarts_total{cluster=~".*-(ci|qa)", pod=~".*celery-beat.*|.*celerybeat.*"}[1h]) > 3
         for: 5m
         labels:
           severity: warning
@@ -117,7 +117,7 @@ groups:
           runbook_url: https://github.com/mitodl/mit-learn/wiki/Celery-Beat-Troubleshooting
       - alert: CeleryBeatPodRestartsCritical
         expr: |-
-          increase(kube_pod_container_status_restarts_total{cluster=~".*-(production)", pod=~".*beat.*"}[1h]) > 3
+          increase(kube_pod_container_status_restarts_total{cluster=~".*-(production)", pod=~".*celery-beat.*|.*celerybeat.*"}[1h]) > 3
         for: 5m
         labels:
           severity: critical
