@@ -105,6 +105,27 @@ groups:
         annotations:
           description: Container {{ $labels.container }} in pod {{ $labels.pod }} in namespace {{ $labels.namespace }} in cluster {{ $labels.cluster }} is in CrashLoopBackOff.
 
+      - alert: CeleryBeatPodRestarts
+        expr: |-
+          increase(kube_pod_container_status_restarts_total{cluster=~".*-(ci|qa)", pod=~".*beat.*"}[1h]) > 3
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Celery Beat pod {{ $labels.pod }} in namespace {{ $labels.namespace }} has restarted {{ $value }} times in the last hour
+          description: High restart count suggests OOM kills or crash loops. Verify memory allocation. Recent fix: MIT Learn beat pods increased to 2048Mi (from 512Mi default). Check pod memory requests/limits and actual usage via RedBeat scheduler delays.
+          runbook_url: https://github.com/mitodl/mit-learn/wiki/Celery-Beat-Troubleshooting
+      - alert: CeleryBeatPodRestartsCritical
+        expr: |-
+          increase(kube_pod_container_status_restarts_total{cluster=~".*-(production)", pod=~".*beat.*"}[1h]) > 3
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: Celery Beat pod {{ $labels.pod }} in namespace {{ $labels.namespace }} has restarted {{ $value }} times in the last hour
+          description: High restart count suggests OOM kills or crash loops. Verify memory allocation. Recent fix: MIT Learn beat pods increased to 2048Mi (from 512Mi default). Check pod memory requests/limits and actual usage via RedBeat scheduler delays.
+          runbook_url: https://github.com/mitodl/mit-learn/wiki/Celery-Beat-Troubleshooting
+
       - alert: PodOOMKilledWarning
         expr: |-
           sum by (cluster, namespace, pod, container) (
